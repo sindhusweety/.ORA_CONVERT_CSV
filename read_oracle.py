@@ -1,5 +1,6 @@
 import  re
 import collections
+from pandas import  read_csv
 import pandas as pd
 from collections import Counter
 import csv
@@ -57,7 +58,18 @@ for i in list_fi:
         host.append(i[0])
         port.append(i[1])
         default_database.append(i[2])
-host = [y for x in host for y in x ]
+# host = [y for x in host for y in x ]
+host_ = []
+exodata = []
+for x in host:
+    for y in x:
+        if y.startswith('edw'):
+            exodata.append("YES")
+            host_.append(y)
+        else:
+            exodata.append("NO")
+            host_.append(y)
+
 port = [y for x in port for y in x ]
 default_database = [y for x in default_database for y in x ]
 
@@ -66,11 +78,16 @@ with open('oracle.csv', 'w', newline='') as csvfile:
     spamwriter = csv.writer(csvfile, delimiter=',',
                             quotechar='|', quoting=csv.QUOTE_MINIMAL)
 
-    data = list(zip(host, port,default_database))
+    data = list(zip(host_, port,default_database,exodata))
     for row in data:
         row = list(row)
         spamwriter.writerow(row)
-print("Program completed")
+
+name_=['service_name', 'port','default_database','exo_data']
+df = pd.read_csv('oracle.csv',names=name_)
+df_ = df.to_csv('oracle.csv', index=None)
+print('programmed successfully')
+
 
 
         # host = []
